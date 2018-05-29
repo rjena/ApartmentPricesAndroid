@@ -14,14 +14,14 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.apartmentprices.R;
 import com.example.apartmentprices.rest.ApartmentModel;
 import com.example.apartmentprices.rest.ApiUtils;
-import com.example.apartmentprices.rest.DistrictModel;
-import com.example.apartmentprices.rest.MaterialModel;
 import com.example.apartmentprices.rest.RjenaInterface;
 
 
@@ -34,9 +34,12 @@ public class DataActivity extends AppCompatActivity {
     Spinner district, material;
     EditText rooms, area, floors;
     CheckBox firstFloor, lastFloor, hasBalcony;
-    FrameLayout progress;
+    FrameLayout progress, noConnection;
+    ProgressBar progressBar;
+    ImageButton retry;
     Toast toast;
     boolean twoFloors = false;
+    String[] districts, materials;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,10 @@ public class DataActivity extends AppCompatActivity {
         setContentView(R.layout.activity_data);
 
         fab = findViewById(R.id.sendFab);
-        progress = findViewById(R.id.sending);
+        progress = findViewById(R.id.progress);
+        noConnection = findViewById(R.id.noConnection);
+        progressBar = findViewById(R.id.loading);
+        retry = findViewById(R.id.retry);
         rooms = findViewById(R.id.roomET);
         area = findViewById(R.id.areaET);
         district = findViewById(R.id.dstrSpinner);
@@ -60,8 +66,8 @@ public class DataActivity extends AppCompatActivity {
         lastFloor.setEnabled(false);
 
         Intent intent = getIntent();
-        final String[] districts = intent.getStringArrayExtra("districts");
-        final String[] materials = intent.getStringArrayExtra("materials");
+        districts = intent.getStringArrayExtra("districts");
+        materials = intent.getStringArrayExtra("materials");
 
         ArrayAdapter<String> dstrAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, districts);
         dstrAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -209,7 +215,14 @@ public class DataActivity extends AppCompatActivity {
             }
         });
 
-
+        retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
+                noConnection.setVisibility(View.GONE);
+                tryCall();
+            }
+        });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -242,37 +255,44 @@ public class DataActivity extends AppCompatActivity {
                     toast.show();
                 } else {
                     progress.setVisibility(View.VISIBLE);
+                    noConnection.setVisibility(View.GONE);
                     fab.setEnabled(false);
-                    RjenaInterface api = ApiUtils.getAPIService();
-                    Call<ApartmentModel> call = api.postData(
-                            Integer.parseInt(rooms.getText().toString()),
-                            Integer.parseInt(area.getText().toString()),
-                            district.getSelectedItemPosition() + 1,
-                            material.getSelectedItemPosition() + 1,
-                            hasBalcony.isChecked(),
-                            Integer.parseInt(floors.getText().toString()),
-                            firstFloor.isChecked(),
-                            lastFloor.isChecked()
-                    );
-                    call.enqueue(new Callback<ApartmentModel>() {
-                        @Override
-                        public void onResponse(Call<ApartmentModel> call, Response<ApartmentModel> response) {
-                            if (response.isSuccessful()) {
-                                Log.i("APPRICERJENA", "POST submitted: \n" + response.body().toString());
-                                finish();
-                                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
-                                intent.putExtra("districts", districts);
-                                intent.putExtra("materials", materials);
-                                startActivity(intent);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ApartmentModel> call, Throwable t) {
-                            Log.i("APPRICERJENA", "Unable to submit POST.");
-                        }
-                    });
+                    tryCall();
                 }
+            }
+        });
+    }
+
+    public void tryCall() {
+        RjenaInterface api = ApiUtils.getAPIService();
+        Call<ApartmentModel> call = api.postData(
+                Integer.parseInt(rooms.getText().toString()),
+                Integer.parseInt(area.getText().toString()),
+                district.getSelectedItemPosition() + 1,
+                material.getSelectedItemPosition() + 1,
+                hasBalcony.isChecked(),
+                Integer.parseInt(floors.getText().toString()),
+                firstFloor.isChecked(),
+                lastFloor.isChecked()
+        );
+        call.enqueue(new Callback<ApartmentModel>() {
+            @Override
+            public void onResponse(Call<ApartmentModel> call, Response<ApartmentModel> response) {
+                if (response.isSuccessful()) {
+                    Log.i("APPRICERJENA", "POST submitted: \n" + response.body().toString());
+                    finish();
+                    Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                    intent.putExtra("districts", districts);
+                    intent.putExtra("materials", materials);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApartmentModel> call, Throwable t) {
+                Log.i("APPRICERJENA", "No connection.");
+                progressBar.setVisibility(View.GONE);
+                noConnection.setVisibility(View.VISIBLE);
             }
         });
     }

@@ -10,6 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.apartmentprices.R;
 import com.example.apartmentprices.rest.ApiUtils;
@@ -23,7 +26,9 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
-    FrameLayout progress;
+    FrameLayout progress, noConnection;
+    ProgressBar progressBar;
+    ImageButton retry;
     String[] districts, materials;
 
     @Override
@@ -31,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fab = findViewById(R.id.fab);
+        noConnection = findViewById(R.id.noConnection);
+        retry = findViewById(R.id.retry);
+        progressBar = findViewById(R.id.loading);
+        progress = findViewById(R.id.progress);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,9 +51,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        progress = findViewById(R.id.loading);
+        retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
+                noConnection.setVisibility(View.GONE);
+                tryCall();
+            }
+        });
+
         progress.setVisibility(View.VISIBLE);
         fab.setEnabled(false);
+
+        tryCall();
+    }
+
+    public void tryCall() {
         RjenaInterface api = ApiUtils.getAPIService();
         Call<DistrictModel[]> call = api.getDistricts("json");
         call.enqueue(new Callback<DistrictModel[]>() {
@@ -61,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<DistrictModel[]> call, Throwable t) {
                 Log.i("APPRICERJENA", "onFailure");
                 Log.i("APPRICERJENA", " Error :  " + t.toString());
+                progressBar.setVisibility(View.GONE);
+                noConnection.setVisibility(View.VISIBLE);
             }
         });
     }

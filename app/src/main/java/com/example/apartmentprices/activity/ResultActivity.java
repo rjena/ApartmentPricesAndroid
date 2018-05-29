@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.apartmentprices.R;
@@ -32,7 +34,9 @@ public class ResultActivity extends AppCompatActivity {
     boolean tap = false;
     TextView roomTV, areaTV, dstrTV, mtrlTV, floorTV, priceTV;
     CheckBox firstCB, lastCB, balconyCB;
-    FrameLayout progress;
+    FrameLayout progress, noConnection;
+    ProgressBar progressBar;
+    ImageButton retry;
     FloatingActionButton fab;
     String[] districts, materials;
 
@@ -42,7 +46,10 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
 
         fab = findViewById(R.id.fab);
-        progress = findViewById(R.id.loading);
+        noConnection = findViewById(R.id.noConnection);
+        retry = findViewById(R.id.retry);
+        progressBar = findViewById(R.id.loading);
+        progress = findViewById(R.id.progress);
         roomTV = findViewById(R.id.roomTV);
         areaTV = findViewById(R.id.areaTV);
         dstrTV = findViewById(R.id.dstrTV);
@@ -53,31 +60,23 @@ public class ResultActivity extends AppCompatActivity {
         balconyCB = findViewById(R.id.balconyCB);
         priceTV = findViewById(R.id.priceTV);
 
-        fab.setEnabled(false);
-
         Intent intent = getIntent();
         districts = intent.getStringArrayExtra("districts");
         materials = intent.getStringArrayExtra("materials");
 
-        RjenaInterface api = ApiUtils.getAPIService();
-        Call<ApartmentModel> call = api.getLastApartment("json");
-        call.enqueue(new Callback<ApartmentModel>() {
-            @Override
-            public void onResponse(Call<ApartmentModel> call, Response<ApartmentModel> response) {
-                if (response.isSuccessful()) {
-                    Log.i("APPRICERJENA", "onResponse");
-                    ApartmentModel apartmentData = response.body();
-                    loadData(apartmentData);
-                }
-            }
+        progress.setVisibility(View.VISIBLE);
+        fab.setEnabled(false);
 
+        tryCall();
+
+        retry.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call<ApartmentModel> call, Throwable t) {
-                Log.i("APPRICERJENA", "onFailure");
-                Log.i("APPRICERJENA", " Error :  " + t.toString());
+            public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
+                noConnection.setVisibility(View.GONE);
+                tryCall();
             }
         });
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,7 +100,30 @@ public class ResultActivity extends AppCompatActivity {
         });
     }
 
-    public void loadData(ApartmentModel a) {
+    public void tryCall() {
+        RjenaInterface api = ApiUtils.getAPIService();
+        Call<ApartmentModel> call = api.getLastApartment("json");
+        call.enqueue(new Callback<ApartmentModel>() {
+            @Override
+            public void onResponse(Call<ApartmentModel> call, Response<ApartmentModel> response) {
+                if (response.isSuccessful()) {
+                    Log.i("APPRICERJENA", "onResponse");
+                    ApartmentModel apartmentData = response.body();
+                    setData(apartmentData);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApartmentModel> call, Throwable t) {
+                Log.i("APPRICERJENA", "onFailure");
+                Log.i("APPRICERJENA", " Error :  " + t.toString());
+                progressBar.setVisibility(View.GONE);
+                noConnection.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    public void setData(ApartmentModel a) {
         double priceCalc = a.getPrice();
 
         if (Math.abs(priceCalc) < 1000) {
