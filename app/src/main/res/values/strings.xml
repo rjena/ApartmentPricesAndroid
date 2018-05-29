@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ApartmentPrices</string>
+    <string name="action_exit">Выход</string>
+    <string name="action_back">В начало</string>
+    <string name="action_reset">Сбросить</string>
+    <string name="main_text">Хотите узнать стоимость квартиры?\n
+        Это приложение может помочь вам узнать примерную стоимость
+        в зависимости от определенных параметров.\n
+        Нажмите на круглую кнопку внизу, чтобы попробовать! :)</string>
+</resources>
