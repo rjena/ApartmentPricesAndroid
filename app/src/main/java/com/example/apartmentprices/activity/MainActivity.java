@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -26,8 +27,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
-    FrameLayout progress, noConnection;
-    ProgressBar progressBar;
+    FrameLayout progress;
+    LinearLayout noConnection;
     ImageButton retry;
     String[] districts, materials;
 
@@ -38,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         fab = findViewById(R.id.fab);
         noConnection = findViewById(R.id.noConnection);
         retry = findViewById(R.id.retry);
-        progressBar = findViewById(R.id.loading);
         progress = findViewById(R.id.progress);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         retry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
                 noConnection.setVisibility(View.GONE);
                 tryCall();
             }
@@ -83,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<DistrictModel[]> call, Throwable t) {
                 Log.i("APPRICERJENA", "onFailure");
                 Log.i("APPRICERJENA", " Error :  " + t.toString());
-                progressBar.setVisibility(View.GONE);
                 noConnection.setVisibility(View.VISIBLE);
             }
         });

@@ -31,44 +31,42 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@color/background">
-
-        <FrameLayout
-            android:id="@+id/noConnection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_gravity="bottom"
-            android:background="@color/backgroundDark"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:padding="10dp"
-                android:text="@string/internet"
-                android:textColor="@color/mainText" />
-
-            <ImageButton
-                android:id="@+id/retry"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center|end"
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="@color/retry"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/retry" />
-        </FrameLayout>
+        android:visibility="visible"
+        android:background="@color/loading">
 
         <ProgressBar
-            android:id="@+id/loading"
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
+        <LinearLayout
+            android:id="@+id/noConnection"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="center"
+                android:text="@string/internet"
+                android:textColor="@color/mainText" />
+
+            <ImageButton
+                android:id="@+id/retry"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@color/background"
+                android:scaleType="fitCenter"
+                android:tint="@color/colorPrimary"
+                app:srcCompat="@drawable/retry_icon" />
+        </LinearLayout>
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -34,8 +35,8 @@ public class DataActivity extends AppCompatActivity {
     Spinner district, material;
     EditText rooms, area, floors;
     CheckBox firstFloor, lastFloor, hasBalcony;
-    FrameLayout progress, noConnection;
-    ProgressBar progressBar;
+    FrameLayout progress;
+    LinearLayout noConnection;
     ImageButton retry;
     Toast toast;
     boolean twoFloors = false;
@@ -49,7 +50,6 @@ public class DataActivity extends AppCompatActivity {
         fab = findViewById(R.id.sendFab);
         progress = findViewById(R.id.progress);
         noConnection = findViewById(R.id.noConnection);
-        progressBar = findViewById(R.id.loading);
         retry = findViewById(R.id.retry);
         rooms = findViewById(R.id.roomET);
         area = findViewById(R.id.areaET);
@@ -218,7 +218,6 @@ public class DataActivity extends AppCompatActivity {
         retry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
                 noConnection.setVisibility(View.GONE);
                 tryCall();
             }
@@ -291,7 +290,6 @@ public class DataActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ApartmentModel> call, Throwable t) {
                 Log.i("APPRICERJENA", "No connection.");
-                progressBar.setVisibility(View.GONE);
                 noConnection.setVisibility(View.VISIBLE);
             }
         });

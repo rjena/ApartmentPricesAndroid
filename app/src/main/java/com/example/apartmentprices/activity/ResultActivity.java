@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.apartmentprices.R;
@@ -34,8 +34,8 @@ public class ResultActivity extends AppCompatActivity {
     boolean tap = false;
     TextView roomTV, areaTV, dstrTV, mtrlTV, floorTV, priceTV;
     CheckBox firstCB, lastCB, balconyCB;
-    FrameLayout progress, noConnection;
-    ProgressBar progressBar;
+    FrameLayout progress;
+    LinearLayout noConnection;
     ImageButton retry;
     FloatingActionButton fab;
     String[] districts, materials;
@@ -48,7 +48,6 @@ public class ResultActivity extends AppCompatActivity {
         fab = findViewById(R.id.fab);
         noConnection = findViewById(R.id.noConnection);
         retry = findViewById(R.id.retry);
-        progressBar = findViewById(R.id.loading);
         progress = findViewById(R.id.progress);
         roomTV = findViewById(R.id.roomTV);
         areaTV = findViewById(R.id.areaTV);
@@ -72,7 +71,6 @@ public class ResultActivity extends AppCompatActivity {
         retry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
                 noConnection.setVisibility(View.GONE);
                 tryCall();
             }
@@ -117,7 +115,6 @@ public class ResultActivity extends AppCompatActivity {
             public void onFailure(Call<ApartmentModel> call, Throwable t) {
                 Log.i("APPRICERJENA", "onFailure");
                 Log.i("APPRICERJENA", " Error :  " + t.toString());
-                progressBar.setVisibility(View.GONE);
                 noConnection.setVisibility(View.VISIBLE);
             }
         });
