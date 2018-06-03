@@ -8,12 +8,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.apartmentprices.R;
 import com.example.apartmentprices.rest.ApiUtils;
@@ -77,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
                     getDistricts(districts);
                 }
             }
-
             @Override
             public void onFailure(Call<DistrictModel[]> call, Throwable t) {
                 Log.i("APPRICERJENA", "onFailure");
@@ -130,12 +126,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_exit) {
-            //finish();
             finishAndRemoveTask();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

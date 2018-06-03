@@ -3,6 +3,8 @@ package com.example.apartmentprices.rest;
 import com.google.gson.annotations.SerializedName;
 
 public class ApartmentModel {
+    @SerializedName("id")
+    private Integer id;
     @SerializedName("room_no")
     private Integer room;
     @SerializedName("area")
@@ -22,6 +24,7 @@ public class ApartmentModel {
     @SerializedName("price")
     private Float price;
 
+    public Integer getId() { return id; }
     public Integer getRoom() { return room; }
     public Integer getArea() { return area; }
     public Integer getDstr() { return dstr; }
@@ -34,7 +37,7 @@ public class ApartmentModel {
 
     @Override
     public String toString() {
-        return "Apartment {\n" +
+        return "Apartment " + id + "{\n" +
                 "   room_no: " + room + "\n" +
                 "   area: " + area + "\n" +
                 "   h_dstr: " + dstr + "\n" +

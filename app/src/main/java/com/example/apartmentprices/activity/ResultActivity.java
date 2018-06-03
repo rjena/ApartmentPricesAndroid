@@ -39,6 +39,7 @@ public class ResultActivity extends AppCompatActivity {
     ImageButton retry;
     FloatingActionButton fab;
     String[] districts, materials;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class ResultActivity extends AppCompatActivity {
         balconyCB = findViewById(R.id.balconyCB);
         priceTV = findViewById(R.id.priceTV);
 
-        Intent intent = getIntent();
+        intent = getIntent();
         districts = intent.getStringArrayExtra("districts");
         materials = intent.getStringArrayExtra("materials");
 
@@ -100,19 +101,18 @@ public class ResultActivity extends AppCompatActivity {
 
     public void tryCall() {
         RjenaInterface api = ApiUtils.getAPIService();
-        Call<ApartmentModel> call = api.getLastApartment("json");
-        call.enqueue(new Callback<ApartmentModel>() {
+        Call<ApartmentModel[]> call = api.getApartments("json");
+        call.enqueue(new Callback<ApartmentModel[]>() {
             @Override
-            public void onResponse(Call<ApartmentModel> call, Response<ApartmentModel> response) {
+            public void onResponse(Call<ApartmentModel[]> call, Response<ApartmentModel[]> response) {
                 if (response.isSuccessful()) {
                     Log.i("APPRICERJENA", "onResponse");
-                    ApartmentModel apartmentData = response.body();
+                    ApartmentModel[] apartmentData = response.body();
                     setData(apartmentData);
                 }
             }
-
             @Override
-            public void onFailure(Call<ApartmentModel> call, Throwable t) {
+            public void onFailure(Call<ApartmentModel[]> call, Throwable t) {
                 Log.i("APPRICERJENA", "onFailure");
                 Log.i("APPRICERJENA", " Error :  " + t.toString());
                 noConnection.setVisibility(View.VISIBLE);
@@ -120,7 +120,21 @@ public class ResultActivity extends AppCompatActivity {
         });
     }
 
-    public void setData(ApartmentModel a) {
+    public void setData(ApartmentModel[] allAp) {
+        ApartmentModel a = allAp[0];
+        for (int i = 0; i < allAp.length; i++)
+            if (allAp[i].getRoom() == intent.getIntExtra("room", 0) &
+                    allAp[i].getArea() == intent.getIntExtra("area", 0) &
+                    allAp[i].getDstr() == intent.getIntExtra("dstr", 0) &
+                    allAp[i].getMtrl() == intent.getIntExtra("mtrl", 0) &
+                    allAp[i].getFloors() == intent.getIntExtra("floors", 0) &
+                    allAp[i].getFirstFloor() == intent.getBooleanExtra("first", false) &
+                    allAp[i].getLastFloor() == intent.getBooleanExtra("last", false) &
+                    allAp[i].getBalcony() == intent.getBooleanExtra("balcony", false)) {
+                a = allAp[i];
+                i = allAp.length;
+            }
+
         double priceCalc = a.getPrice();
 
         if (Math.abs(priceCalc) < 1000) {
@@ -153,7 +167,6 @@ public class ResultActivity extends AppCompatActivity {
         Spannable sqm = new SpannableString("  м²");
         sqm.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.mainText)), 0, sqm.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         areaTV.append(sqm);
-
         if (a.getFirstFloor()) {
             firstCB.setChecked(true);
             firstCB.setTextColor(getResources().getColor(R.color.resText));
@@ -179,12 +192,10 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_back) {
             finish();
             onBackPressed();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

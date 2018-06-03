@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -60,8 +59,6 @@ public class DataActivity extends AppCompatActivity {
         lastFloor = findViewById(R.id.lastFloorCB);
         hasBalcony = findViewById(R.id.balconyCB);
 
-        //floors.measure(0, 0);
-
         firstFloor.setEnabled(false);
         lastFloor.setEnabled(false);
 
@@ -79,13 +76,9 @@ public class DataActivity extends AppCompatActivity {
 
         rooms.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {
-            }
-
+            public void afterTextChanged(Editable s) {}
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() != 0) {
@@ -131,13 +124,9 @@ public class DataActivity extends AppCompatActivity {
         });
         area.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {
-            }
-
+            public void afterTextChanged(Editable s) {}
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() != 0) {
@@ -154,13 +143,9 @@ public class DataActivity extends AppCompatActivity {
 
         floors.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {
-            }
-
+            public void afterTextChanged(Editable s) {}
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0 || Integer.parseInt(s.toString()) == 1) {
@@ -226,9 +211,7 @@ public class DataActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String out = "Введите";
-                if (rooms.getText().toString().equals("")) {
-                    out += " количество комнат";
-                }
+                if (rooms.getText().toString().equals("")) out += " количество комнат";
                 if (area.getText().toString().equals("")) {
                     if (floors.getText().toString().equals("")) {
                         if (!out.equals("Введите"))
@@ -283,10 +266,17 @@ public class DataActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
                     intent.putExtra("districts", districts);
                     intent.putExtra("materials", materials);
+                    intent.putExtra("room", Integer.parseInt(rooms.getText().toString()));
+                    intent.putExtra("area", Integer.parseInt(area.getText().toString()));
+                    intent.putExtra("dstr", district.getSelectedItemPosition() + 1);
+                    intent.putExtra("mtrl", material.getSelectedItemPosition() + 1);
+                    intent.putExtra("floors", Integer.parseInt(floors.getText().toString()));
+                    intent.putExtra("first", firstFloor.isChecked());
+                    intent.putExtra("last", lastFloor.isChecked());
+                    intent.putExtra("balcony", hasBalcony.isChecked());
                     startActivity(intent);
                 }
             }
-
             @Override
             public void onFailure(Call<ApartmentModel> call, Throwable t) {
                 Log.i("APPRICERJENA", "No connection.");

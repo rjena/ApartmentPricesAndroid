@@ -247,8 +247,10 @@
                 android:id="@+id/retry"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:padding="5dp"
+                android:elevation="5dp"
                 android:layout_gravity="center"
-                android:background="@null"
+                android:background="@drawable/round"
                 android:scaleType="fitCenter"
                 android:tint="@color/colorPrimary"
                 app:srcCompat="@drawable/retry_icon" />

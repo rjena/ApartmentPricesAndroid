@@ -22,7 +22,7 @@ public interface RjenaInterface {
     );
 
     @GET("api/")
-    Call<ApartmentModel> getLastApartment(@Query("format") String format);
+    Call<ApartmentModel[]> getApartments(@Query("format") String format);
 
     @GET("districts/")
     Call<DistrictModel[]> getDistricts(@Query("format") String format);
