@@ -40,6 +40,7 @@ public class DataActivity extends AppCompatActivity {
     Toast toast;
     boolean twoFloors = false;
     String[] districts, materials;
+    boolean req;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,8 @@ public class DataActivity extends AppCompatActivity {
 
         firstFloor.setEnabled(false);
         lastFloor.setEnabled(false);
+
+        req = false;
 
         Intent intent = getIntent();
         districts = intent.getStringArrayExtra("districts");
@@ -84,16 +87,10 @@ public class DataActivity extends AppCompatActivity {
                 if (s.length() != 0) {
                     if (Integer.parseInt(s.toString()) < 1) {
                         rooms.setText("");
-                        if (toast != null)
-                            toast.cancel();
-                        toast = Toast.makeText(getApplicationContext(), "Значение меньше 1 !\nВведите заново !", Toast.LENGTH_SHORT);
-                        toast.show();
+                        makeToast("Значение меньше 1 !\nВведите заново !", Toast.LENGTH_SHORT);
                     } else if (Integer.parseInt(s.toString()) > 20) {
                         rooms.setText("");
-                        if (toast != null)
-                            toast.cancel();
-                        toast = Toast.makeText(getApplicationContext(), "Значение больше 20 !\nВведите заново !", Toast.LENGTH_SHORT);
-                        toast.show();
+                        makeToast("Значение больше 20 !\nВведите заново !", Toast.LENGTH_SHORT);
                     }
                 }
             }
@@ -106,17 +103,10 @@ public class DataActivity extends AppCompatActivity {
                         int a = Integer.parseInt(area.getText().toString());
                         if (a < 10) {
                             area.setText("");
-                            if (toast != null)
-                                toast.cancel();
-                            toast = Toast.makeText(getApplicationContext(), "Площадь меньше 10 !\nВведите заново !", Toast.LENGTH_SHORT);
-                            toast.show();
+                            makeToast("Площадь меньше 10 !\nВведите заново !", Toast.LENGTH_SHORT);
                         } else if (!rooms.getText().toString().equals("") && Integer.parseInt(rooms.getText().toString()) * 10 > a) {
                             area.setText("");
-                            if (toast != null)
-                                toast.cancel();
-                            toast = Toast.makeText(getApplicationContext(),
-                                    "Площадь должна быть больше\nКоличество комнат * 10 !\nВведите заново !", Toast.LENGTH_LONG);
-                            toast.show();
+                            makeToast("Площадь должна быть больше\nКоличество комнат * 10 !\nВведите заново !", Toast.LENGTH_LONG);
                         }
                     }
                 }
@@ -132,10 +122,7 @@ public class DataActivity extends AppCompatActivity {
                 if (s.length() != 0) {
                     if (Integer.parseInt(s.toString()) > 500) {
                         area.setText("");
-                        if (toast != null)
-                            toast.cancel();
-                        toast = Toast.makeText(getApplicationContext(), "Значение больше 500 !\nВведите заново !", Toast.LENGTH_SHORT);
-                        toast.show();
+                        makeToast("Значение больше 500 !\nВведите заново !", Toast.LENGTH_SHORT);
                     }
                 }
             }
@@ -166,16 +153,10 @@ public class DataActivity extends AppCompatActivity {
                     lastFloor.setEnabled(true);
                     if (Integer.parseInt(s.toString()) < 1) {
                         floors.setText("");
-                        if (toast != null)
-                            toast.cancel();
-                        toast = Toast.makeText(getApplicationContext(), "Значение меньше 1 !\nВведите заново !", Toast.LENGTH_SHORT);
-                        toast.show();
+                        makeToast("Значение меньше 1 !\nВведите заново !", Toast.LENGTH_SHORT);
                     } else if (Integer.parseInt(s.toString()) > 100) {
                         floors.setText("");
-                        if (toast != null)
-                            toast.cancel();
-                        toast = Toast.makeText(getApplicationContext(), "Значение больше 100 !\nВведите заново !", Toast.LENGTH_SHORT);
-                        toast.show();
+                        makeToast("Значение больше 100 !\nВведите заново !", Toast.LENGTH_SHORT);
                     }
                 }
             }
@@ -231,10 +212,7 @@ public class DataActivity extends AppCompatActivity {
                 }
 
                 if (!out.equals("Введите")) {
-                    if (toast != null)
-                        toast.cancel();
-                    toast = Toast.makeText(getApplicationContext(), out, Toast.LENGTH_LONG);
-                    toast.show();
+                    makeToast(out, Toast.LENGTH_LONG);
                 } else {
                     progress.setVisibility(View.VISIBLE);
                     noConnection.setVisibility(View.GONE);
@@ -246,6 +224,7 @@ public class DataActivity extends AppCompatActivity {
     }
 
     public void tryCall() {
+        req = true;
         RjenaInterface api = ApiUtils.getAPIService();
         Call<ApartmentModel> call = api.postData(
                 Integer.parseInt(rooms.getText().toString()),
@@ -285,6 +264,13 @@ public class DataActivity extends AppCompatActivity {
         });
     }
 
+    public void makeToast(String m, int length) {
+        if (toast != null)
+            toast.cancel();
+        toast = Toast.makeText(getApplicationContext(), m, length);
+        toast.show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_edit, menu);
@@ -297,7 +283,7 @@ public class DataActivity extends AppCompatActivity {
         if (id == R.id.action_back) {
             finish();
             onBackPressed();
-        } else if (id == R.id.action_reset) {
+        } else if (!req && id == R.id.action_reset) {
             rooms.setText("");
             area.setText("");
             district.setSelection(0);

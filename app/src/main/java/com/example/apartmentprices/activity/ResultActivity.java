@@ -149,7 +149,7 @@ public class ResultActivity extends AppCompatActivity {
                 priceCalc -= priceCalc % 10;
                 priceTV.setText(String.valueOf((int) priceCalc) + " тысяч рублей");
             }
-        } else {
+        } else if (Math.abs(priceCalc) < 1000000) {
             priceCalc /= 1000;
             String s = new DecimalFormat("#0.00").format(priceCalc);
             if (s.substring(s.length() - 2).equals("00"))
@@ -158,6 +158,15 @@ public class ResultActivity extends AppCompatActivity {
                 priceTV.setText(s.substring(0, s.length() - 1) + " млн. рублей");
             else
                 priceTV.setText(s + " млн. рублей");
+        } else {
+            priceCalc /= 1000000;
+            String s = new DecimalFormat("#0.00").format(priceCalc);
+            if (s.substring(s.length() - 2).equals("00"))
+                priceTV.setText(s.substring(0, s.length() - 3) + " млрд. рублей");
+            else if (s.substring(s.length() - 1).equals("0"))
+                priceTV.setText(s.substring(0, s.length() - 1) + " млрд. рублей");
+            else
+                priceTV.setText(s + " млрд. рублей");
         }
         roomTV.setText(String.valueOf(a.getRoom()));
         dstrTV.setText(districts[a.getDstr() - 1]);
